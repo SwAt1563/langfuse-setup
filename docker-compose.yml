@@ -1,0 +1,73 @@
+version: '3.8'
+
+# For production environments, we suggest using a configuration of 2 CPU cores and 3 GB of RAM for the Langfuse container. 
+# On AWS, this would equate to a t3.medium instance. 
+# The container is stateless, allowing you to autoscale it based on actual resource usage.
+
+services:
+
+  # Langfuse just support "public" schma
+  # https://langfuse.com/self-hosting/infrastructure/postgres
+  db:
+    image: postgres:17.2
+    container_name: db # database host
+    restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 3s
+      timeout: 3s
+      retries: 10
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=postgres
+      
+    ports:
+      - 5432:5432
+    volumes:
+      - database_data:/var/lib/postgresql/data
+    networks:
+      - external_network
+
+  langfuse-server:
+    image: langfuse/langfuse:2
+    container_name: langfuse-server
+    restart: always
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "4000:4000"
+    env_file:
+      - langfuse.env
+    networks:
+      - external_network
+
+  test_app:
+    container_name: test_app
+    build:
+      context: ./app
+      dockerfile: Dockerfile
+    ports:
+      - "9000:9000"
+    volumes:
+      - ./app:/app
+    env_file:
+      - .env
+    restart: always
+    environment: 
+      - USER_AGENT=qutaiba
+    command: /bin/sh -c "echo 'Running start_app.sh' && /app/start_app.sh"
+    networks:
+      - external_network
+
+
+volumes:
+  database_data:
+
+
+networks:
+  external_network:
+    external: true
+
+
