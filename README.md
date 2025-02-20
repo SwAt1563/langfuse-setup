@@ -3,6 +3,8 @@
 
 This repository provides an easy way to self-host LangSmith using Docker. Follow the steps below to set up and run LangSmith on your own server.
 
+![alt text](image.png)
+
 ## Prerequisites
 - **Docker** installed on your system  
 - **Make** installed (for running the Makefile)  
