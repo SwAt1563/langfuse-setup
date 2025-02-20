@@ -19,8 +19,6 @@ asgiref==3.8.1
 
 
 
-
-
 # GenAI
 langchain-core==0.3.36
 langchain==0.3.19
@@ -28,8 +26,6 @@ langchain-community==0.3.17
 langchain-openai==0.3.6
 openai==1.63.2
 tiktoken==0.9.0 # o200k_base for gpt-4o-mini
-langgraph==0.2.74
-pydantic-ai[logfire,openai]==0.0.24
 langfuse==2.59.3
 
 # for making requests
